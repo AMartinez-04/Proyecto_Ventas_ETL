@@ -1,13 +1,8 @@
 """
 ETL - Sistema de Análisis de Ventas (CSV -> Transform -> DB)
 
-Por defecto usa SQLite para que puedas ejecutar localmente sin instalar un servidor.
-Si deseas Azure SQL / SQL Server: cambia CONNECTION_MODE a "sqlserver" y configura CONN_STR.
+Por defecto use SQLite para  poder jecutar localmente sin instalar un servidor.
 
-Requisitos:
-    pip install pandas
-(para SQL Server)
-    pip install pyodbc
 """
 
 from __future__ import annotations
@@ -16,9 +11,7 @@ import sqlite3
 import pandas as pd
 from datetime import datetime
 
-# -------------------------
 # Configuración
-# -------------------------
 CONNECTION_MODE = os.getenv("CONNECTION_MODE", "sqlite")  # "sqlite" o "sqlserver"
 
 SQLITE_DB = os.getenv("SQLITE_DB", "sales_analytics.db")
@@ -33,9 +26,8 @@ CSV_PRODUCTS = os.getenv("CSV_PRODUCTS", os.path.join(BASE_DIR, "products.csv"))
 CSV_ORDERS = os.getenv("CSV_ORDERS", os.path.join(BASE_DIR, "orders.csv"))
 CSV_ORDER_DETAILS = os.getenv("CSV_ORDER_DETAILS", os.path.join(BASE_DIR, "order_details.csv"))
 
-# -------------------------
-# Helpers: conexión
-# -------------------------
+#  conexión
+
 def get_connection():
     if CONNECTION_MODE.lower() == "sqlite":
         conn = sqlite3.connect(SQLITE_DB)
@@ -55,9 +47,7 @@ def run_schema_sqlite(conn):
     with open(schema_path, "r", encoding="utf-8") as f:
         conn.executescript(f.read())
 
-# -------------------------
 # Extracción
-# -------------------------
 def extract():
     customers = pd.read_csv(CSV_CUSTOMERS)
     products = pd.read_csv(CSV_PRODUCTS)
@@ -65,9 +55,8 @@ def extract():
     order_details = pd.read_csv(CSV_ORDER_DETAILS)
     return customers, products, orders, order_details
 
-# -------------------------
 # Transformación (reglas de limpieza)
-# -------------------------
+
 def transform(customers, products, orders, order_details):
     # --- Customers ---
     customers = customers.drop_duplicates(subset=["CustomerID"]).copy()
@@ -131,9 +120,7 @@ def transform(customers, products, orders, order_details):
 
     return customers, products, orders, order_details
 
-# -------------------------
 # Carga
-# -------------------------
 def load(conn, customers, products, orders, order_details):
     now = datetime.utcnow().isoformat(timespec="seconds")
 
