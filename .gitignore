@@ -1,0 +1,9 @@
+# No subir datasets
+*.csv
+
+# No subir base de datos local
+*.db
+
+# Carpetas temporales
+__pycache__/
+*.pyc
