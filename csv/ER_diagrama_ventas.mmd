@@ -1,0 +1,55 @@
+erDiagram
+    DATASOURCES ||--o{ CUSTOMERS : "loads"
+    DATASOURCES ||--o{ PRODUCTS : "loads"
+    DATASOURCES ||--o{ ORDERS : "loads"
+    DATASOURCES ||--o{ ORDERDETAILS : "loads"
+
+    CUSTOMERS ||--o{ ORDERS : places
+    ORDERS ||--o{ ORDERDETAILS : contains
+    PRODUCTS ||--o{ ORDERDETAILS : sold_in
+
+    DATASOURCES {
+      int SourceID PK
+      string SourceName
+      string SourceType
+      string SourcePath
+      datetime LoadedAt
+    }
+
+    CUSTOMERS {
+      int CustomerID PK
+      string FirstName
+      string LastName
+      string Email
+      string Phone
+      string City
+      string Country
+      int SourceID FK
+    }
+
+    PRODUCTS {
+      int ProductID PK
+      string ProductName
+      string Category
+      decimal Price
+      int Stock
+      int SourceID FK
+    }
+
+    ORDERS {
+      int OrderID PK
+      int CustomerID FK
+      date OrderDate
+      string Status
+      int SourceID FK
+    }
+
+    ORDERDETAILS {
+      int OrderDetailID PK
+      int OrderID FK
+      int ProductID FK
+      int Quantity
+      decimal UnitPrice
+      decimal LineTotal
+      int SourceID FK
+    }
